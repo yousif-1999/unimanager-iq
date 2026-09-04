@@ -201,3 +201,93 @@
 .hero-stat strong{display:block;font-size:24px;color:#1d4ed8}
 .hero-stat span{display:block;color:#66738a;font-size:11px;margin-top:4px}
 .nav-item[data-page]{position:relative}
+
+/* UniManager IQ v0.7 — right vertical navigation + horizontal toolbars */
+.app{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) var(--sidebar-w);
+  min-height:100vh;
+  direction:ltr;
+  background:var(--bg);
+}
+.sidebar{
+  grid-column:2;
+  grid-row:1;
+  direction:rtl;
+  min-width:var(--sidebar-w);
+  width:var(--sidebar-w);
+  min-height:100vh;
+  height:100vh;
+  position:sticky;
+  top:0;
+  overflow-y:auto;
+  padding:18px 14px;
+  background:linear-gradient(180deg,var(--sidebar-bg),var(--sidebar-bg-2));
+  border-right:1px solid rgba(255,255,255,.04);
+}
+.main-shell{
+  grid-column:1;
+  grid-row:1;
+  min-width:0;
+  direction:rtl;
+  display:flex;
+  flex-direction:column;
+}
+.content{
+  grid-column:auto;
+  grid-row:auto;
+  direction:rtl;
+  min-width:0;
+  padding:26px 28px;
+}
+.utility-bar{
+  direction:rtl;
+}
+.toolbar{
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  justify-content:flex-start;
+  flex-wrap:nowrap;
+  gap:8px;
+}
+.panel-head{
+  flex-direction:row;
+}
+.quick-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+}
+.report-actions{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+}
+.filters.three{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+}
+@media(max-width:900px){
+  :root{--sidebar-w:220px}
+  .content{padding:20px}
+  .toolbar{flex-wrap:wrap}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .grid-2{grid-template-columns:1fr}
+  .quick-grid{grid-template-columns:repeat(2,1fr)}
+  .report-actions{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:650px){
+  :root{--sidebar-w:185px}
+  .sidebar{padding:14px 9px}
+  .side-brand div:last-child{display:none}
+  .sidebar-section-title{padding-right:7px}
+  .nav-item{font-size:11px;padding:10px 8px;gap:7px}
+  .nav-icon{width:24px;height:24px;flex-basis:24px;font-size:12px}
+  .content{padding:14px}
+  .stats-grid{grid-template-columns:1fr}
+  .form-grid,.filters.three,.filters{grid-template-columns:1fr}
+  .toolbar{flex-wrap:wrap}
+  .topbar{align-items:flex-start;gap:10px;flex-direction:column}
+  .report-actions{grid-template-columns:1fr}
+  .profile-grid{grid-template-columns:1fr}
+}
