@@ -104,10 +104,17 @@
         <div><span class="eyebrow">إدارة الطلبة</span><h3>معلومات الطلبة وسجلاتهم</h3><p>إضافة الطلبة، البحث، متابعة الحالة المالية، واستعراض الملف الكامل.</p></div>
         <div class="hero-stat"><strong id="studentsHeroCount">0</strong><span>طالب مسجل</span></div>
       </div>
+      <div class="mini-stats student-mini-stats">
+        <div class="mini-stat"><span>إجمالي الطلبة</span><strong id="studentTotalMini">0</strong></div>
+        <div class="mini-stat"><span>صباحية</span><strong id="studentMorningMini">0</strong></div>
+        <div class="mini-stat"><span>مسائية</span><strong id="studentEveningMini">0</strong></div>
+        <div class="mini-stat"><span>عليهم متبقي</span><strong id="studentDueMini">0</strong></div>
+      </div>
       <div class="panel">
         <div class="panel-head">
-          <div><h3>إدارة الطلبة</h3><div class="muted">ملفات الطلبة والبحث والاستيراد من Excel</div></div>
+          <div><h3>سجل الطلبة</h3><div class="muted">بحث متقدم، فلترة، ملف الطالب، واستيراد وتصدير Excel</div></div>
           <div class="toolbar">
+            <button id="downloadTemplateBtn" class="secondary-btn">نموذج Excel</button>
             <button id="importBtn" class="secondary-btn">استيراد Excel</button>
             <button id="exportBtn" class="secondary-btn">تصدير Excel</button>
             <button id="addStudentBtn" class="primary-btn">+ طالب جديد</button>
