@@ -1,104 +1,14 @@
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="UniManager IQ - نظام إدارة الكليات والمعاهد" />
-  <title>UniManager IQ</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-</head>
-<body>
-  <div id="loginView" class="login-screen">
-    <div class="login-card">
-      <div class="brand-mark">U</div>
-      <h1>UniManager IQ</h1>
-      <p>نظام الإدارة الجامعية</p>
-      <form id="loginForm">
-        <label>اسم المستخدم</label>
-        <input id="username" type="text" value="admin" autocomplete="username" required />
-        <label>كلمة المرور</label>
-        <input id="password" type="password" value="admin123" autocomplete="current-password" required />
-        <button class="primary-btn" type="submit">تسجيل الدخول</button>
-      </form>
-      <small>نسخة تجريبية — admin / admin123</small>
-    </div>
-  </div>
-
-  <div id="appView" class="app hidden">
-    <aside class="sidebar">
-      <div class="side-brand">
-        <div class="brand-mark">U</div>
-        <div><strong>UniManager IQ</strong><span>إدارة جامعية</span></div>
-      </div>
-      <nav id="nav">
-        <button class="nav-item active" data-page="dashboard">لوحة التحكم</button>
-        <button class="nav-item" data-page="students">الطلبة</button>
-        <button class="nav-item" data-page="finance">الأقساط والحسابات</button>
-        <button class="nav-item" data-page="grades">الدرجات</button>
-        <button class="nav-item" data-page="reports">التقارير</button>
-      </nav>
-      <button id="logoutBtn" class="logout-btn">تسجيل الخروج</button>
-    </aside>
-
-    <main class="content">
-      <header class="topbar">
-        <div>
-          <h2 id="pageTitle">لوحة التحكم</h2>
-          <div id="dateNow" class="muted"></div>
-        </div>
-        <div class="top-actions"><span class="status-dot"></span> النظام يعمل</div>
-      </header>
-
-      <section id="dashboardPage" class="page">
-        <div class="stats-grid">
-          <div class="stat-card"><span>إجمالي الطلبة</span><strong id="statStudents">0</strong></div>
-          <div class="stat-card"><span>إجمالي الأقساط</span><strong id="statExpected">0</strong></div>
-          <div class="stat-card"><span>المبالغ المستلمة</span><strong id="statPaid">0</strong></div>
-          <div class="stat-card"><span>المتبقي</span><strong id="statRemaining">0</strong></div>
-        </div>
-        <div class="grid-2">
-          <div class="panel"><div class="panel-head"><h3>آخر الطلبة المضافين</h3><button class="link-btn" data-page-jump="students">عرض الكل</button></div><div id="recentStudents"></div></div>
-          <div class="panel"><div class="panel-head"><h3>ملخص التحصيل</h3></div><div id="financeSummary" class="summary-box"></div></div>
-        </div>
-        <div class="panel"><div class="panel-head"><h3>الوصول السريع</h3></div><div class="quick-grid">
-          <button data-page-jump="students">+ إضافة طالب</button><button data-page-jump="finance">تسجيل دفعة</button><button data-page-jump="grades">إدخال درجات</button><button data-page-jump="reports">تصدير تقرير</button>
-        </div></div>
-      </section>
-
-      <section id="studentsPage" class="page hidden">
-        <div class="panel">
-          <div class="panel-head"><div><h3>إدارة الطلبة</h3><div class="muted">إضافة، بحث، تعديل وحذف</div></div><div class="toolbar"><button id="importBtn" class="secondary-btn">استيراد Excel</button><button id="exportBtn" class="secondary-btn">تصدير Excel</button><button id="addStudentBtn" class="primary-btn">+ طالب جديد</button><input id="excelInput" type="file" accept=".xlsx,.xls,.csv" hidden /></div></div>
-          <div class="filters"><input id="studentSearch" placeholder="ابحث بالاسم أو الرقم أو القسم..." /><select id="studentDeptFilter"><option value="">كل الأقسام</option></select></div>
-          <div class="table-wrap"><table><thead><tr><th>الرقم</th><th>اسم الطالب</th><th>القسم</th><th>المرحلة</th><th>الدراسة</th><th>القسط</th><th>المدفوع</th><th>الإجراءات</th></tr></thead><tbody id="studentsTable"></tbody></table></div>
-        </div>
-      </section>
-
-      <section id="financePage" class="page hidden">
-        <div class="panel"><div class="panel-head"><div><h3>الأقساط والحسابات</h3><div class="muted">متابعة المبلغ المستحق والمدفوع والمتبقي</div></div><button id="addPaymentBtn" class="primary-btn">+ تسجيل دفعة</button></div>
-          <div class="table-wrap"><table><thead><tr><th>الطالب</th><th>القسط</th><th>المدفوع</th><th>المتبقي</th><th>نسبة التحصيل</th></tr></thead><tbody id="financeTable"></tbody></table></div>
-        </div>
-      </section>
-
-      <section id="gradesPage" class="page hidden">
-        <div class="panel"><div class="panel-head"><div><h3>الدرجات</h3><div class="muted">واجهة أولية لتهيئة سجل الدرجات</div></div></div>
-          <div class="empty-state"><strong>سيتم ربط الدرجات بالمواد والمراحل في الإصدار التالي.</strong><p>النسخة الحالية تركز على الطلبة والأقساط واستيراد/تصدير Excel.</p></div>
-        </div>
-      </section>
-
-      <section id="reportsPage" class="page hidden">
-        <div class="panel"><div class="panel-head"><div><h3>التقارير</h3><div class="muted">تصدير سريع للبيانات الحالية</div></div></div>
-          <div class="report-actions"><button id="reportStudents">تقرير الطلبة Excel</button><button id="reportFinance">تقرير الحسابات Excel</button></div>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <dialog id="studentDialog"><form method="dialog" id="studentForm" class="dialog-card"><div class="dialog-head"><h3 id="studentDialogTitle">إضافة طالب</h3><button type="button" class="icon-btn" onclick="closeDialog('studentDialog')">×</button></div><input type="hidden" id="studentId" /><div class="form-grid">
-    <div><label>رقم الطالب</label><input id="sNumber" required /></div><div><label>اسم الطالب</label><input id="sName" required /></div><div><label>القسم</label><input id="sDept" required /></div><div><label>المرحلة</label><select id="sStage"><option>الأولى</option><option>الثانية</option><option>الثالثة</option><option>الرابعة</option></select></div><div><label>الدراسة</label><select id="sStudy"><option>صباحية</option><option>مسائية</option></select></div><div><label>القسط الكلي</label><input id="sFee" type="number" min="0" required /></div><div><label>المدفوع</label><input id="sPaid" type="number" min="0" required /></div></div><div class="dialog-actions"><button type="button" class="secondary-btn" onclick="closeDialog('studentDialog')">إلغاء</button><button class="primary-btn" value="default">حفظ</button></div></form></dialog>
-
-  <dialog id="paymentDialog"><form method="dialog" id="paymentForm" class="dialog-card"><div class="dialog-head"><h3>تسجيل دفعة</h3><button type="button" class="icon-btn" onclick="closeDialog('paymentDialog')">×</button></div><div><label>الطالب</label><select id="pStudent" required></select></div><div><label>مبلغ الدفعة</label><input id="pAmount" type="number" min="1" required /></div><div class="dialog-actions"><button type="button" class="secondary-btn" onclick="closeDialog('paymentDialog')">إلغاء</button><button class="primary-btn" value="default">حفظ</button></div></form></dialog>
-
- <script src="app.js"></script>
-</body>
-</html>
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>UniManager IQ</title><link rel="stylesheet" href="style.css"><script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script></head><body>
+<div id="loginView" class="login-screen"><form id="loginForm" class="login-card"><div class="brand-mark">U</div><h1>UniManager IQ</h1><p>نظام الإدارة الجامعية</p><label>اسم المستخدم</label><input id="username" value="admin" required><label>كلمة المرور</label><input id="password" type="password" value="admin123" required><button class="primary-btn">تسجيل الدخول</button><small>نسخة تجريبية — admin / admin123</small></form></div>
+<div id="appView" class="app hidden"><aside class="sidebar"><div class="side-brand"><div class="brand-mark">U</div><div><b>UniManager IQ</b><span>إدارة جامعية</span></div></div><nav><button class="nav-item active" data-page="dashboard">لوحة التحكم</button><button class="nav-item" data-page="students">الطلبة</button><button class="nav-item" data-page="finance">الأقساط والحسابات</button><button class="nav-item" data-page="grades">الدرجات</button><button class="nav-item" data-page="reports">التقارير</button></nav><button id="logoutBtn" class="logout-btn">تسجيل الخروج</button></aside>
+<main class="content"><header class="topbar"><div><h2 id="pageTitle">لوحة التحكم</h2><span id="dateNow" class="muted"></span></div><span class="system-ok">● النظام يعمل</span></header>
+<section id="dashboardPage" class="page"><div class="stats-grid"><div class="stat-card"><span>إجمالي الطلبة</span><strong id="statStudents">0</strong></div><div class="stat-card"><span>إجمالي الأقساط</span><strong id="statExpected">0</strong></div><div class="stat-card"><span>المبالغ المستلمة</span><strong id="statPaid">0</strong></div><div class="stat-card"><span>المتبقي</span><strong id="statRemaining">0</strong></div></div><div class="grid-2"><div class="panel"><div class="panel-head"><h3>آخر الطلبة</h3><button class="link-btn" data-page-jump="students">عرض الكل</button></div><div id="recentStudents"></div></div><div class="panel center"><h3>نسبة التحصيل</h3><strong id="collectionPct" class="big-number">0%</strong><span class="muted">من إجمالي الأقساط</span></div></div><div class="panel"><h3>الوصول السريع</h3><div class="quick-grid"><button data-page-jump="students">+ إضافة طالب</button><button data-page-jump="finance">تسجيل دفعة</button><button data-page-jump="grades">إدخال درجات</button><button data-page-jump="reports">التقارير</button></div></div></section>
+<section id="studentsPage" class="page hidden"><div class="panel"><div class="panel-head"><div><h3>إدارة الطلبة</h3><span class="muted">بحث متقدم، ملف الطالب، الأقساط وExcel</span></div><div class="toolbar"><button id="importBtn" class="secondary-btn">استيراد Excel</button><button id="exportBtn" class="secondary-btn">تصدير Excel</button><button id="addStudentBtn" class="primary-btn">+ طالب جديد</button><input id="excelInput" type="file" accept=".xlsx,.xls,.csv" hidden></div></div><div class="filters"><input id="studentSearch" placeholder="الاسم، الرقم، القسم..."><select id="studentDeptFilter"><option value="">كل الأقسام</option></select><select id="studentStageFilter"><option value="">كل المراحل</option><option>الأولى</option><option>الثانية</option><option>الثالثة</option><option>الرابعة</option></select></div><div class="table-wrap"><table><thead><tr><th>الرقم</th><th>اسم الطالب</th><th>القسم</th><th>المرحلة</th><th>الدراسة</th><th>القسط</th><th>المدفوع</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody id="studentsTable"></tbody></table></div></div></section>
+<section id="financePage" class="page hidden"><div class="panel"><div class="panel-head"><div><h3>الأقساط والحسابات</h3><span class="muted">كشف الحساب وسجل الدفعات</span></div><button id="addPaymentBtn" class="primary-btn">+ تسجيل دفعة</button></div><div class="table-wrap"><table><thead><tr><th>الطالب</th><th>القسط</th><th>المدفوع</th><th>المتبقي</th><th>النسبة</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody id="financeTable"></tbody></table></div></div></section>
+<section id="gradesPage" class="page hidden"><div class="panel center roadmap"><h3>الدرجات وMaster Sheet</h3><p>الواجهة التالية ستتضمن المواد، السعي، النهائي، الدرجة النهائية، النتيجة وكشوف Master Sheet.</p><button class="primary-btn" data-page-jump="students">العودة إلى الطلبة</button></div></section>
+<section id="reportsPage" class="page hidden"><div class="panel"><h3>التقارير</h3><div class="report-actions"><button id="reportStudents">تقرير الطلبة Excel</button><button id="reportFinance">تقرير الحسابات Excel</button><button id="reportPayments">سجل الدفعات Excel</button></div></div></section>
+</main></div>
+<dialog id="studentDialog"><form id="studentForm" method="dialog" class="dialog-card"><div class="dialog-head"><h3 id="studentDialogTitle">إضافة طالب</h3><button type="button" class="icon-btn" onclick="closeDialog('studentDialog')">×</button></div><input id="studentId" type="hidden"><div class="form-grid"><div><label>رقم الطالب</label><input id="sNumber" required></div><div><label>اسم الطالب الكامل</label><input id="sName" required></div><div><label>القسم</label><input id="sDept" required></div><div><label>المرحلة</label><select id="sStage"><option>الأولى</option><option>الثانية</option><option>الثالثة</option><option>الرابعة</option></select></div><div><label>الدراسة</label><select id="sStudy"><option>صباحية</option><option>مسائية</option></select></div><div><label>القسط الكلي</label><input id="sFee" type="number" min="0" required></div><div><label>المدفوع</label><input id="sPaid" type="number" min="0" required></div></div><div class="dialog-actions"><button type="button" class="secondary-btn" onclick="closeDialog('studentDialog')">إلغاء</button><button class="primary-btn">حفظ</button></div></form></dialog>
+<dialog id="profileDialog"><div class="dialog-card"><div class="dialog-head"><h3>ملف الطالب</h3><button class="icon-btn" onclick="closeDialog('profileDialog')">×</button></div><div id="profileBody"></div></div></dialog>
+<dialog id="paymentDialog"><form id="paymentForm" method="dialog" class="dialog-card"><div class="dialog-head"><h3>تسجيل دفعة</h3><button type="button" class="icon-btn" onclick="closeDialog('paymentDialog')">×</button></div><label>الطالب</label><select id="pStudent" required></select><label>المبلغ</label><input id="pAmount" type="number" min="1" required><label>طريقة الدفع</label><select id="pMethod"><option>نقدًا</option><option>تحويل</option><option>بطاقة</option></select><label>ملاحظة</label><input id="pNote"><div class="dialog-actions"><button type="button" class="secondary-btn" onclick="closeDialog('paymentDialog')">إلغاء</button><button class="primary-btn">حفظ الدفعة</button></div></form></dialog>
+<script src="app.js"></script></body></html>
