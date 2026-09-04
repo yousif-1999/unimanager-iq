@@ -393,3 +393,103 @@
 }
 @media(max-width:900px){.grades-kpis{grid-template-columns:repeat(2,1fr)}.filters.four{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:650px){.grades-kpis,.filters.four{grid-template-columns:1fr}}
+
+.department-cards{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px
+}
+.department-card{
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#fff;
+  overflow:hidden;
+}
+.department-card-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  padding:15px 16px;
+  background:#f7f9fd;
+  border-bottom:1px solid var(--line)
+}
+.department-title{font-weight:700}
+.department-code{font-size:11px;color:var(--muted);margin-top:3px}
+.department-stage{
+  padding:11px 14px;
+  border-bottom:1px solid #eef1f5
+}
+.department-stage:last-child{border-bottom:0}
+.stage-title{
+  font-size:11px;
+  color:#526076;
+  font-weight:700;
+  margin-bottom:7px
+}
+.subject-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:6px 9px;
+  margin:3px 3px 0 0;
+  border-radius:8px;
+  background:#edf3ff;
+  color:#17499b;
+  font-size:11px
+}
+.no-subjects{font-size:11px;color:var(--muted)}
+.subject-count{
+  display:inline-grid;
+  place-items:center;
+  min-width:24px;height:24px;
+  border-radius:7px;
+  background:#eaf1ff;
+  color:#1d4ed8;
+  font-size:11px;
+  font-weight:700
+}
+@media(max-width:1000px){.department-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.department-cards{grid-template-columns:1fr}}
+
+.subject-group-label{
+  margin:16px 0 8px;
+  font-size:13px;
+  font-weight:700;
+  color:#26354d;
+  padding-bottom:7px;
+  border-bottom:1px solid var(--line)
+}
+.subject-catalog{
+  display:grid;
+  gap:12px
+}
+.subject-stage-card{
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#fff;
+  padding:12px 14px
+}
+.subject-stage-card h4{
+  margin:0 0 9px;
+  font-size:12px;
+  color:#47566d
+}
+.subject-stage-list{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px
+}
+.subject-pill{
+  background:#eef4ff;
+  color:#17499b;
+  border-radius:8px;
+  padding:7px 10px;
+  font-size:11px
+}
+.subject-pill small{opacity:.75}
+.dept-select-title{
+  font-size:11px;
+  color:var(--muted);
+  margin:0 0 8px
+}

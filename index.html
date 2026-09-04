@@ -195,18 +195,22 @@
 
     <section id="departmentsPage" class="page hidden">
       <div class="page-hero">
-        <div><span class="eyebrow">الهيكل الأكاديمي</span><h3>الأقسام والمواد</h3><p>تعريف الأقسام الدراسية وربط المواد بالمراحل والأقسام.</p></div>
+        <div><span class="eyebrow">الهيكل الأكاديمي</span><h3>الأقسام والمواد</h3><p>كل قسم يعرض المواد الخاصة به مرتبة حسب المرحلة الدراسية.</p></div>
         <div class="hero-stat"><strong id="deptHeroCount">0</strong><span>قسم</span></div>
       </div>
-      <div class="grid-2">
-        <div class="panel">
-          <div class="panel-head"><div><h3>الأقسام</h3><div class="muted">إدارة الأقسام الدراسية</div></div><button id="addDeptBtn" class="primary-btn">+ قسم</button></div>
-          <div id="departmentsList"></div>
+      <div class="panel">
+        <div class="panel-head">
+          <div><h3>الأقسام الدراسية وموادها</h3><div class="muted">اضغط على القسم لعرض مواده حسب المرحلة.</div></div>
+          <button id="addDeptBtn" class="primary-btn">+ إضافة قسم</button>
         </div>
-        <div class="panel">
-          <div class="panel-head"><div><h3>المواد</h3><div class="muted">المواد المرتبطة بالقسم والمرحلة</div></div><button id="addSubjectBtn" class="primary-btn">+ مادة</button></div>
-          <div id="subjectsList"></div>
+        <div id="departmentsList" class="department-cards"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <div><h3>إضافة وإدارة المواد</h3><div class="muted">ربط كل مادة بالقسم والمرحلة وعدد الوحدات.</div></div>
+          <button id="addSubjectBtn" class="primary-btn">+ إضافة مادة</button>
         </div>
+        <div id="subjectsList"></div>
       </div>
     </section>
 
@@ -277,7 +281,9 @@
   <div class="dialog-head"><h3>إدخال درجة</h3><button type="button" class="icon-btn" onclick="closeDialog('gradeDialog')">×</button></div>
   <div class="form-grid">
     <div><label>الطالب</label><select id="gStudent" required></select></div>
-    <div><label>المادة</label><select id="gSubject" required></select></div>
+    <div><label>القسم</label><select id="gDept" required></select></div>
+    <div><label>المرحلة</label><select id="gStage"><option>الأولى</option><option>الثانية</option><option>الثالثة</option><option>الرابعة</option></select></div>
+    <div><label>المادة الخاصة بالقسم</label><select id="gSubject" required></select></div>
     <div><label>الفصل</label><select id="gTerm"><option value="الأول">الفصل الأول</option><option value="الثاني">الفصل الثاني</option></select></div>
     <div><label>السعي</label><input id="gCourse" type="text" inputmode="numeric" required></div>
     <div><label>النهائي</label><input id="gFinal" type="text" inputmode="numeric" required></div>

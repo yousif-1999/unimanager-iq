@@ -60,7 +60,25 @@ if(qs("#financeDeptFilter")){const cur=qs("#financeDeptFilter").value;qs("#finan
 const rows=students.filter(s=>(!q||[s.number,s.name].join(" ").toLowerCase().includes(q))&&(!dept||s.dept===dept)).map(s=>{const discount=getDiscount(s.id),paidNow=getPaid(s.id),due=Math.max(0,num(s.fee)-discount),rem=Math.max(0,due-paidNow),pct=due?Math.round(paidNow/due*100):100;const st=rem<=0?"مكتمل":paidNow>0?"جزئي":"متأخر";return {s,discount,due,paidNow,rem,pct,st};}).filter(x=>!status||x.st===status);
 qs("#financeTable").innerHTML=rows.map(x=>`<tr><td><strong>${x.s.name}</strong><div class="muted">${x.s.number}</div></td><td>${fmt(x.s.fee)}</td><td>${fmt(x.discount)}</td><td>${fmt(x.due)}</td><td>${fmt(x.paidNow)}</td><td class="finance-remain">${fmt(x.rem)}</td><td><span class="badge ${x.st==="مكتمل"?"success":x.st==="جزئي"?"warning":"danger"}">${x.st}</span></td><td><button class="action-btn" onclick="openPaymentFor('${x.s.id}')">دفعة</button><button class="action-btn" onclick="openDiscountFor('${x.s.id}')">خصم</button><button class="action-btn" onclick="openProfile('${x.s.id}')">كشف</button></td></tr>`).join("")||'<tr><td colspan="8" class="empty-state">لا توجد نتائج</td></tr>';
 }
-function renderDepartments(){qs("#departmentsList").innerHTML=departments.map(d=>`<div class="list-row"><div><strong>${d.name}</strong><div class="muted">${d.code}</div></div><button class="small-btn" onclick="deleteDept('${d.id}')">حذف</button></div>`).join("")||'<div class="empty-state">لا توجد أقسام</div>';qs("#subjectsList").innerHTML=subjects.map(m=>`<div class="list-row"><div><strong>${m.name}</strong><div class="muted">${m.dept} — ${m.stage} — ${m.units} وحدات</div></div><button class="small-btn" onclick="deleteSubject('${m.id}')">حذف</button></div>`).join("")||'<div class="empty-state">لا توجد مواد</div>';}
+function renderDepartments(){
+if(qs("#departmentsList")){
+qs("#departmentsList").innerHTML=departments.map(d=>{
+const deptSubjects=subjects.filter(m=>m.dept===d.name);
+const stages=["الأولى","الثانية","الثالثة","الرابعة"];
+const stagesHtml=stages.map(stage=>{
+const list=deptSubjects.filter(m=>m.stage===stage);
+return `<div class="department-stage"><div class="stage-title">${stage} — ${list.length} مادة</div>${list.length?list.map(m=>`<span class="subject-chip">${m.name}<small> (${m.units} و)</small></span>`).join(""):'<span class="no-subjects">لا توجد مواد لهذه المرحلة.</span>'}</div>`;
+}).join("");
+return `<div class="department-card"><div class="department-card-head"><div><div class="department-title">${d.name}</div><div class="department-code">رمز: ${d.code}</div></div><div class="list-meta"><span class="subject-count">${deptSubjects.length}</span><button class="small-btn" onclick="deleteDept('${d.id}')">حذف</button></div></div>${stagesHtml}</div>`;
+}).join("")||'<div class="empty-state">لا توجد أقسام.</div>';
+}
+if(qs("#subjectsList")){
+qs("#subjectsList").innerHTML=departments.map(d=>{
+const deptSubjects=subjects.filter(m=>m.dept===d.name);
+return `<div class="subject-stage-card"><div class="subject-group-label">${d.name} — مجموعة المواد الخاصة بالقسم <span class="subject-count">${deptSubjects.length}</span></div><div class="subject-catalog">${["الأولى","الثانية","الثالثة","الرابعة"].map(stage=>{const list=deptSubjects.filter(m=>m.stage===stage);return `<div><h4>${stage}</h4><div class="subject-stage-list">${list.length?list.map(m=>`<span class="subject-pill">${m.name}<small> — ${m.units} وحدات</small></span>`).join(""):'<span class="no-subjects">لا توجد مواد.</span>'}</div></div>`}).join("")}</div></div>`;
+}).join("")||'<div class="empty-state">أضف قسمًا ومواده أولًا.</div>';
+}
+}
 function renderGradeFilters(){const sub=qs("#gradeSubjectFilter"),cur=sub.value;sub.innerHTML='<option value="">كل المواد</option>'+subjects.map(s=>`<option value="${s.id}">${s.name}</option>`).join("");sub.value=subjects.some(s=>s.id===cur)?cur:"";}
 function renderGrades(){
 renderStudentFilters();renderGradeFilters();
@@ -90,8 +108,21 @@ qs("#addPaymentBtn").onclick=()=>window.openPaymentFor(students[0]?.id||"");
 qs("#paymentForm").onsubmit=e=>{e.preventDefault();const studentId=qs("#pStudent").value,amount=num(qs("#pAmount").value),s=students.find(x=>x.id===studentId);if(!s||amount<=0)return;const rem=Math.max(0,num(s.fee)-getDiscount(s.id)-getPaid(s.id));if(amount>rem&&rem>0&&!confirm("المبلغ أكبر من المتبقي. هل تريد المتابعة؟"))return;const payment={id:crypto.randomUUID(),studentId,amount,date:qs("#pDate").value||new Date().toISOString().slice(0,10),method:qs("#pMethod").value,note:qs("#pNote").value.trim(),installment:normalizeDigits(qs("#pInstallment").value)};payments.push(payment);qs("#paymentDialog").close();save();printReceipt(payment);};const studentId=qs("#pStudent").value,amount=num(qs("#pAmount").value),s=students.find(x=>x.id===studentId);if(!s||amount<=0)return;const rem=Math.max(0,num(s.fee)-num(s.paid));if(amount>rem&&rem>0&&!confirm("المبلغ أكبر من المتبقي. هل تريد المتابعة؟"))return;s.paid=num(s.paid)+amount;payments.push({id:crypto.randomUUID(),studentId,amount,date:new Date().toISOString(),method:qs("#pMethod").value,note:qs("#pNote").value.trim()});qs("#paymentDialog").close();save();};
 window.openDiscountFor=id=>{fillDiscountStudents();qs("#dStudent").value=id;qs("#dAmount").value="";qs("#dReason").value="";qs("#discountDialog").showModal();};
 qs("#discountForm").onsubmit=e=>{e.preventDefault();const studentId=qs("#dStudent").value,amount=num(qs("#dAmount").value),reason=qs("#dReason").value.trim();if(amount<=0||!reason)return;discounts.push({id:crypto.randomUUID(),studentId,amount,reason,date:new Date().toISOString().slice(0,10)});qs("#discountDialog").close();save();};
-qs("#addGradeBtn").onclick=()=>{qs("#gStudent").innerHTML=students.map(s=>`<option value="${s.id}">${s.number} — ${s.name}</option>`).join("");qs("#gSubject").innerHTML=subjects.map(m=>`<option value="${m.id}">${m.name} — ${m.stage}</option>`).join("");qs("#gTerm").value="الأول";qs("#gCourse").value="";qs("#gFinal").value="";qs("#gradeDialog").showModal();};
-qs("#gradeForm").onsubmit=e=>{e.preventDefault();const studentId=qs("#gStudent").value,subjectId=qs("#gSubject").value,course=num(qs("#gCourse").value),finalScore=num(qs("#gFinal").value);if(course<0||course>40||finalScore<0||finalScore>60){alert("السعي يجب أن يكون بين 0 و40 والنهائي بين 0 و60.");return;}const term=qs("#gTerm").value;const old=grades.find(g=>g.studentId===studentId&&g.subjectId===subjectId&&((g.term||"الأول")===term));const data={id:old?.id||crypto.randomUUID(),studentId,subjectId,term,course,final:finalScore};grades=old?grades.map(g=>g.id===old.id?data:g):[...grades,data];qs("#gradeDialog").close();save();};const studentId=qs("#gStudent").value,subjectId=qs("#gSubject").value;const old=grades.find(g=>g.studentId===studentId&&g.subjectId===subjectId);const data={id:old?.id||crypto.randomUUID(),studentId,subjectId,course:num(qs("#gCourse").value),final:num(qs("#gFinal").value)};grades=old?grades.map(g=>g.id===old.id?data:g):[...grades,data];qs("#gradeDialog").close();save();};
+qs("#addGradeBtn").onclick=()=>{
+qs("#gStudent").innerHTML=students.map(s=>`<option value="${s.id}" data-dept="${s.dept}" data-stage="${s.stage}">${s.number} — ${s.name}</option>`).join("");
+qs("#gDept").innerHTML=departments.map(d=>`<option value="${d.name}">${d.name}</option>`).join("");
+qs("#gStage").value="الأولى";
+updateGradeEntrySubjects();
+qs("#gTerm").value="الأول";qs("#gCourse").value="";qs("#gFinal").value="";qs("#gradeDialog").showModal();
+};
+function updateGradeEntrySubjects(){
+const dept=qs("#gDept").value,stage=qs("#gStage").value;
+const list=subjects.filter(m=>m.dept===dept&&m.stage===stage);
+qs("#gSubject").innerHTML=list.length?list.map(m=>`<option value="${m.id}">${m.name} — ${m.units} وحدات</option>`).join(""):'<option value="">لا توجد مواد لهذا القسم والمرحلة</option>';
+}
+qs("#gDept").onchange=()=>{updateGradeEntrySubjects();const s=students.find(x=>x.dept===qs("#gDept").value&&x.stage===qs("#gStage").value);if(s)qs("#gStudent").value=s.id;};
+qs("#gStage").onchange=()=>{updateGradeEntrySubjects();const s=students.find(x=>x.dept===qs("#gDept").value&&x.stage===qs("#gStage").value);if(s)qs("#gStudent").value=s.id;};
+qs("#gradeForm").onsubmit=e=>{e.preventDefault();const studentId=qs("#gStudent").value,subjectId=qs("#gSubject").value,course=num(qs("#gCourse").value),finalScore=num(qs("#gFinal").value),student=students.find(x=>x.id===studentId),subject=subjects.find(x=>x.id===subjectId);if(!student||!subject||student.dept!==subject.dept||student.stage!==subject.stage){alert("المادة المختارة لا تنتمي إلى قسم الطالب ومرحلته.");return;}if(course<0||course>40||finalScore<0||finalScore>60){alert("السعي يجب أن يكون بين 0 و40 والنهائي بين 0 و60.");return;}const term=qs("#gTerm").value;const old=grades.find(g=>g.studentId===studentId&&g.subjectId===subjectId&&((g.term||"الأول")===term));const data={id:old?.id||crypto.randomUUID(),studentId,subjectId,term,course,final:finalScore};grades=old?grades.map(g=>g.id===old.id?data:g):[...grades,data];qs("#gradeDialog").close();save();};const studentId=qs("#gStudent").value,subjectId=qs("#gSubject").value;const old=grades.find(g=>g.studentId===studentId&&g.subjectId===subjectId);const data={id:old?.id||crypto.randomUUID(),studentId,subjectId,course:num(qs("#gCourse").value),final:num(qs("#gFinal").value)};grades=old?grades.map(g=>g.id===old.id?data:g):[...grades,data];qs("#gradeDialog").close();save();};
 window.deleteGrade=id=>{grades=grades.filter(g=>g.id!==id);save();};
 qs("#addDeptBtn").onclick=()=>{qs("#dName").value="";qs("#dCode").value="";qs("#deptDialog").showModal();};
 qs("#deptForm").onsubmit=e=>{e.preventDefault();departments.push({id:crypto.randomUUID(),name:qs("#dName").value.trim(),code:normalizeDigits(qs("#dCode").value.trim())});qs("#deptDialog").close();save();};
