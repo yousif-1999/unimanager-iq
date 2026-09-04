@@ -87,7 +87,15 @@ const rows=students.filter(s=>(!q||[s.number,s.name].join(" ").toLowerCase().inc
 qs("#financeTable").innerHTML=rows.map(x=>`<tr><td><strong>${x.s.name}</strong><div class="muted">${x.s.number}</div></td><td>${fmt(x.s.fee)}</td><td>${fmt(x.discount)}</td><td>${fmt(x.due)}</td><td>${fmt(x.paidNow)}</td><td class="finance-remain">${fmt(x.rem)}</td><td><span class="badge ${x.st==="مكتمل"?"success":x.st==="جزئي"?"warning":"danger"}">${x.st}</span></td><td><button class="action-btn" onclick="openPaymentFor('${x.s.id}')">دفعة</button><button class="action-btn" onclick="openDiscountFor('${x.s.id}')">خصم</button><button class="action-btn" onclick="openProfile('${x.s.id}')">كشف</button></td></tr>`).join("")||'<tr><td colspan="8" class="empty-state">لا توجد نتائج</td></tr>';
 }
 
-function readImageAsDataUrl(file){
+const DEFAULT_DEPT_LOGOS = {
+  FIN: "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='24' fill='%23eaf2ff'/%3E%3Ccircle cx='60' cy='60' r='40' fill='%231d4ed8'/%3E%3Ctext x='60' y='73' font-size='42' text-anchor='middle' fill='white' font-family='Arial'%3Eد%3C/text%3E%3C/svg%3E",
+  BUS: "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='24' fill='%23eefbf3'/%3E%3Ccircle cx='60' cy='60' r='40' fill='%2315803d'/%3E%3Ctext x='60' y='73' font-size='42' text-anchor='middle' fill='white' font-family='Arial'%3Eأ%3C/text%3E%3C/svg%3E",
+  LAW: "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='24' fill='%23fff7ed'/%3E%3Ccircle cx='60' cy='60' r='40' fill='%23b45309'/%3E%3Ctext x='60' y='73' font-size='42' text-anchor='middle' fill='white' font-family='Arial'%3Eق%3C/text%3E%3C/svg%3E"
+};
+function getDeptLogo(dept){
+  return dept.logo || DEFAULT_DEPT_LOGOS[dept.code] || DEFAULT_DEPT_LOGOS.LAW;
+}
+function readImageAsDataURL(file){
   return new Promise((resolve,reject)=>{
     if(!file){resolve("");return;}
     const reader=new FileReader();
@@ -96,28 +104,22 @@ function readImageAsDataUrl(file){
     reader.readAsDataURL(file);
   });
 }
-const DEFAULT_DEPT_LOGOS={
-  FIN:"data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='24' fill='%23eaf2ff'/%3E%3Ccircle cx='60' cy='60' r='40' fill='%231d4ed8'/%3E%3Ctext x='60' y='73' font-size='42' text-anchor='middle' fill='white' font-family='Arial'%3Eد%3C/text%3E%3C/svg%3E",
-  BUS:"data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='24' fill='%23eefbf3'/%3E%3Ccircle cx='60' cy='60' r='40' fill='%2315803d'/%3E%3Ctext x='60' y='73' font-size='42' text-anchor='middle' fill='white' font-family='Arial'%3Eأ%3C/text%3E%3C/svg%3E",
-  LAW:"data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='24' fill='%23fff7ed'/%3E%3Ccircle cx='60' cy='60' r='40' fill='%23b45309'/%3E%3Ctext x='60' y='73' font-size='42' text-anchor='middle' fill='white' font-family='Arial'%3Eق%3C/text%3E%3C/svg%3E"
-};
-function ensureDepartmentLogos(){
-  departments.forEach(d=>{
-    if(!d.logo) d.logo=DEFAULT_DEPT_LOGOS[d.code]||DEFAULT_DEPT_LOGOS.LAW;
-  });
-}
-async function changeDeptLogo(id){
-  const d=departments.find(x=>x.id===id);
-  if(!d)return;
+window.changeDeptLogo=async function(id){
+  const dept=departments.find(d=>d.id===id);
+  if(!dept)return;
   const input=document.createElement("input");
-  input.type="file"; input.accept="image/*";
+  input.type="file";
+  input.accept="image/*";
   input.onchange=async()=>{
-    const file=input.files?.[0];
-    if(file){d.logo=await readImageAsDataUrl(file);save();}
+    if(!input.files?.[0])return;
+    dept.logo=await readImageAsDataURL(input.files[0]);
+    save();
+    renderDepartments();
   };
   input.click();
-}
-function renderDepartments(){ensureDepartmentLogos();
+};
+
+function renderDepartments(){
 if(qs("#departmentsList")){
 qs("#departmentsList").innerHTML=departments.map(d=>{
 const deptSubjects=subjects.filter(m=>m.dept===d.name);
@@ -126,7 +128,7 @@ const stagesHtml=stages.map(stage=>{
 const list=deptSubjects.filter(m=>m.stage===stage);
 return `<div class="department-stage"><div class="stage-title">${stage} — ${list.length} مادة</div>${list.length?list.map(m=>`<span class="subject-chip">${m.name}<small> (${m.units} و)</small></span>`).join(""):'<span class="no-subjects">لا توجد مواد لهذه المرحلة.</span>'}</div>`;
 }).join("");
-return `<div class="department-card"><div class="department-card-head"><div class="department-identity"><img class="department-logo" src="${d.logo||DEFAULT_DEPT_LOGOS.LAW}" alt="شعار ${d.name}"><div><div class="department-title">${d.name}</div><div class="department-code">رمز: ${d.code}</div></div></div><div class="list-meta"><span class="subject-count">${deptSubjects.length}</span><button class="small-btn" onclick="changeDeptLogo('${d.id}')">تغيير الشعار</button><button class="small-btn" onclick="deleteDept('${d.id}')">حذف</button></div></div>${stagesHtml}</div>`;
+return `<div class="department-card"><div class="department-card-head"><div class="department-identity"><img class="department-logo" src="${getDeptLogo(d)}" alt="شعار ${d.name}"><div><div class="department-title">${d.name}</div><div class="department-code">رمز: ${d.code}</div></div></div><div class="list-meta"><span class="subject-count">${deptSubjects.length}</span><button class="small-btn" onclick="changeDeptLogo('${d.id}')">تغيير الشعار</button><button class="small-btn" onclick="deleteDept('${d.id}')">حذف</button></div></div>${stagesHtml}</div>`;
 }).join("")||'<div class="empty-state">لا توجد أقسام.</div>';
 }
 if(qs("#subjectsList")){
@@ -182,7 +184,7 @@ qs("#gStage").onchange=()=>{updateGradeEntrySubjects();const s=students.find(x=>
 qs("#gradeForm").onsubmit=e=>{e.preventDefault();const studentId=qs("#gStudent").value,subjectId=qs("#gSubject").value,course=num(qs("#gCourse").value),finalScore=num(qs("#gFinal").value),student=students.find(x=>x.id===studentId),subject=subjects.find(x=>x.id===subjectId);if(!student||!subject||student.dept!==subject.dept||student.stage!==subject.stage){alert("المادة المختارة لا تنتمي إلى قسم الطالب ومرحلته.");return;}if(course<0||course>40||finalScore<0||finalScore>60){alert("السعي يجب أن يكون بين 0 و40 والنهائي بين 0 و60.");return;}const term=qs("#gTerm").value;const old=grades.find(g=>g.studentId===studentId&&g.subjectId===subjectId&&((g.term||"الأول")===term));const data={id:old?.id||crypto.randomUUID(),studentId,subjectId,term,course,final:finalScore};grades=old?grades.map(g=>g.id===old.id?data:g):[...grades,data];qs("#gradeDialog").close();save();};
 window.deleteGrade=id=>{grades=grades.filter(g=>g.id!==id);save();};
 qs("#addDeptBtn").onclick=()=>{qs("#dName").value="";qs("#dCode").value="";qs("#deptDialog").showModal();};
-qs("#deptForm").onsubmit=async e=>{e.preventDefault();const name=qs("#dName").value.trim(),code=qs("#dCode").value.trim().toUpperCase(),file=qs("#dLogo")?.files?.[0],logo=await readImageAsDataUrl(file);if(!name||!code){alert("أدخل اسم القسم والرمز.");return;}if(departments.some(d=>d.name.toLowerCase()===name.toLowerCase()||d.code.toLowerCase()===code.toLowerCase())){alert("القسم أو رمز القسم موجود مسبقًا.");return;}departments.push({id:uid(),name,code,logo:logo||DEFAULT_DEPT_LOGOS[code]||DEFAULT_DEPT_LOGOS.LAW});save();e.target.reset();qs("#deptDialog").close();};save();};
+qs("#deptForm").onsubmit=async e=>{e.preventDefault();const name=qs("#dName").value.trim(),code=normalizeDigits(qs("#dCode").value.trim()).toUpperCase(),logo=await readImageAsDataURL(qs("#dLogo")?.files?.[0]);if(!name||!code){alert("أدخل اسم القسم والرمز.");return;}if(departments.some(d=>d.name===name||d.code===code)){alert("القسم أو رمز القسم موجود مسبقًا.");return;}departments.push({id:crypto.randomUUID(),name,code,logo:logo||DEFAULT_DEPT_LOGOS[code]||DEFAULT_DEPT_LOGOS.LAW});qs("#deptDialog").close();save();};
 window.deleteDept=id=>{const d=departments.find(x=>x.id===id);if(students.some(s=>s.dept===d?.name)||subjects.some(s=>s.dept===d?.name)){alert("لا يمكن حذف القسم لأنه مرتبط بطلبة أو مواد.");return;}departments=departments.filter(x=>x.id!==id);save();};
 qs("#addSubjectBtn").onclick=()=>{fillDeptSelect("subDept",false);qs("#subName").value="";qs("#subStage").value="الأولى";qs("#subUnits").value="3";qs("#subjectDialog").showModal();};
 qs("#subjectForm").onsubmit=e=>{e.preventDefault();subjects.push({id:crypto.randomUUID(),name:qs("#subName").value.trim(),dept:qs("#subDept").value,stage:qs("#subStage").value,units:num(qs("#subUnits").value)});qs("#subjectDialog").close();save();};
@@ -202,4 +204,3 @@ qs("#exportBtn").onclick=exportStudents;qs("#reportStudents").onclick=exportStud
 qs("#importBtn").onclick=()=>qs("#excelInput").click();
 qs("#excelInput").onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const wb=XLSX.read(await f.arrayBuffer());const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:""});const mapped=rows.map((r,i)=>({id:crypto.randomUUID(),number:normalizeDigits(r["الرقم"]||r["رقم الطالب"]||r.number||i+1),name:r["اسم الطالب"]||r["الاسم"]||r.name||"",dept:r["القسم"]||r.dept||departments[0]?.name||"",stage:r["المرحلة"]||r.stage||"الأولى",study:r["الدراسة"]||r.study||"صباحية",fee:num(r["القسط الكلي"]||r["القسط"]||r.fee),paid:num(r["المدفوع"]||r.paid)})).filter(x=>x.name);if(!mapped.length)throw new Error("لم يتم العثور على صفوف صالحة");students=[...students,...mapped];save();alert(`تم استيراد ${mapped.length} طالب بنجاح`);}catch(err){alert("تعذر استيراد الملف: "+err.message)}e.target.value="";};
 renderAll();
-try{ensureDepartmentLogos();save();}catch(e){}

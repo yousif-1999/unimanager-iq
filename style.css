@@ -507,4 +507,5 @@
 .subjects-table td{font-size:12px}
 .subject-stage-chip{display:inline-block;padding:5px 8px;border-radius:7px;background:#eef4ff;color:#17499b;font-size:11px}
 
-.department-identity{display:flex;align-items:center;gap:12px}.department-logo{display:block!important;width:58px!important;height:58px!important;min-width:58px;border-radius:14px;object-fit:cover;border:1px solid var(--line);background:#fff;}
+.department-identity{display:flex;align-items:center;gap:12px;min-width:0}
+.department-logo{display:block!important;width:58px!important;height:58px!important;min-width:58px;border-radius:14px;object-fit:cover;border:1px solid var(--line);background:#fff;flex:none}
