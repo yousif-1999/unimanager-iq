@@ -291,3 +291,44 @@
   .report-actions{grid-template-columns:1fr}
   .profile-grid{grid-template-columns:1fr}
 }
+
+/* v0.8 — force vertical sidebar navigation */
+.sidebar nav{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:stretch !important;
+  flex-wrap:nowrap !important;
+  width:100%;
+  overflow:visible !important;
+}
+.sidebar .nav-item{
+  display:flex !important;
+  width:100%;
+  flex:0 0 auto;
+  flex-direction:row;
+  align-items:center;
+  justify-content:flex-start;
+  white-space:normal;
+}
+.sidebar .nav-icon{
+  flex:0 0 28px;
+}
+@media(max-width:900px){
+  .sidebar nav{
+    flex-direction:column !important;
+    overflow:visible !important;
+  }
+}
+@media(max-width:650px){
+  .sidebar nav{
+    flex-direction:column !important;
+    overflow:visible !important;
+  }
+  .sidebar .nav-item{
+    width:100%;
+    flex:0 0 auto;
+  }
+  .sidebar .nav-icon{
+    flex-basis:24px;
+  }
+}
