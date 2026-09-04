@@ -31,16 +31,33 @@
       <div class="brand-mark">U</div>
       <div><strong>UniManager IQ</strong><span>إدارة جامعية</span></div>
     </div>
+    <div class="sidebar-section-title">الإدارة الرئيسية</div>
     <nav>
-      <button class="nav-item active" data-page="dashboard">لوحة التحكم</button>
-      <button class="nav-item" data-page="students">الطلبة</button>
-      <button class="nav-item" data-page="finance">الأقساط والحسابات</button>
-      <button class="nav-item" data-page="grades">الدرجات و Master Sheet</button>
-      <button class="nav-item" data-page="departments">الأقسام والمواد</button>
-      <button class="nav-item" data-page="reports">التقارير</button>
+      <button class="nav-item active" data-page="dashboard"><span class="nav-icon">⌂</span><span>لوحة التحكم</span></button>
+      <button class="nav-item" data-page="students"><span class="nav-icon">♙</span><span>الطلبة</span></button>
+      <button class="nav-item" data-page="finance"><span class="nav-icon">▣</span><span>الأقساط والحسابات</span></button>
+      <button class="nav-item" data-page="grades"><span class="nav-icon">▤</span><span>الدرجات و Master Sheet</span></button>
+      <button class="nav-item" data-page="departments"><span class="nav-icon">⌘</span><span>الأقسام والمواد</span></button>
+      <button class="nav-item" data-page="reports"><span class="nav-icon">▥</span><span>التقارير</span></button>
     </nav>
-    <button id="logoutBtn" class="logout-btn">تسجيل الخروج</button>
+    <div class="sidebar-section-title">النظام</div>
+    <nav>
+      <button class="nav-item" data-page="dashboard"><span class="nav-icon">⚙</span><span>الإعدادات</span></button>
+    </nav>
+    <button id="logoutBtn" class="logout-btn"><span>⇥</span> تسجيل الخروج</button>
   </aside>
+
+  <div class="main-shell">
+    <header class="utility-bar">
+      <div class="utility-brand">
+        <span class="online-dot"></span>
+        <div><strong>لوحة الإدارة</strong><small>نظام إدارة الكليات والمعاهد</small></div>
+      </div>
+      <div class="utility-actions">
+        <button class="utility-btn" title="الإشعارات">🔔</button>
+        <button class="utility-avatar" title="المدير">م</button>
+      </div>
+    </header>
 
   <main class="content">
     <header class="topbar">
@@ -83,6 +100,10 @@
     </section>
 
     <section id="studentsPage" class="page hidden">
+      <div class="page-hero">
+        <div><span class="eyebrow">إدارة الطلبة</span><h3>معلومات الطلبة وسجلاتهم</h3><p>إضافة الطلبة، البحث، متابعة الحالة المالية، واستعراض الملف الكامل.</p></div>
+        <div class="hero-stat"><strong id="studentsHeroCount">0</strong><span>طالب مسجل</span></div>
+      </div>
       <div class="panel">
         <div class="panel-head">
           <div><h3>إدارة الطلبة</h3><div class="muted">ملفات الطلبة والبحث والاستيراد من Excel</div></div>
@@ -110,6 +131,10 @@
     </section>
 
     <section id="financePage" class="page hidden">
+      <div class="page-hero">
+        <div><span class="eyebrow">الحسابات</span><h3>الأقساط والمدفوعات</h3><p>متابعة الاستحقاقات، الدفعات، المتبقي، ونسب التحصيل.</p></div>
+        <div class="hero-stat"><strong id="financeHeroRemaining">0</strong><span>إجمالي المتبقي</span></div>
+      </div>
       <div class="panel">
         <div class="panel-head">
           <div><h3>الأقساط والحسابات</h3><div class="muted">كشف حساب ومتابعة الدفعات</div></div>
@@ -123,6 +148,10 @@
     </section>
 
     <section id="gradesPage" class="page hidden">
+      <div class="page-hero">
+        <div><span class="eyebrow">الشؤون الأكاديمية</span><h3>الدرجات و Master Sheet</h3><p>إدارة المواد والدرجات وحساب النتيجة النهائية والنجاح والرسوب.</p></div>
+        <div class="hero-stat"><strong id="gradesHeroCount">0</strong><span>سجل درجات</span></div>
+      </div>
       <div class="panel">
         <div class="panel-head">
           <div><h3>الدرجات و Master Sheet</h3><div class="muted">إدارة المواد والدرجات وحساب النتيجة</div></div>
@@ -143,6 +172,10 @@
     </section>
 
     <section id="departmentsPage" class="page hidden">
+      <div class="page-hero">
+        <div><span class="eyebrow">الهيكل الأكاديمي</span><h3>الأقسام والمواد</h3><p>تعريف الأقسام الدراسية وربط المواد بالمراحل والأقسام.</p></div>
+        <div class="hero-stat"><strong id="deptHeroCount">0</strong><span>قسم</span></div>
+      </div>
       <div class="grid-2">
         <div class="panel">
           <div class="panel-head"><div><h3>الأقسام</h3><div class="muted">إدارة الأقسام الدراسية</div></div><button id="addDeptBtn" class="primary-btn">+ قسم</button></div>
@@ -156,6 +189,10 @@
     </section>
 
     <section id="reportsPage" class="page hidden">
+      <div class="page-hero">
+        <div><span class="eyebrow">مركز التقارير</span><h3>التقارير والتصدير</h3><p>تصدير بيانات الطلبة والحسابات والدفعات والدرجات إلى Excel.</p></div>
+        <div class="hero-stat"><strong>Excel</strong><span>صيغة التصدير</span></div>
+      </div>
       <div class="panel">
         <div class="panel-head"><div><h3>التقارير</h3><div class="muted">تصدير البيانات الحالية إلى Excel</div></div></div>
         <div class="report-actions">
