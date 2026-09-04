@@ -138,41 +138,56 @@
     </section>
 
     <section id="financePage" class="page hidden">
-      <div class="page-hero">
-        <div><span class="eyebrow">الحسابات</span><h3>الأقساط والمدفوعات</h3><p>متابعة الاستحقاقات، الدفعات، المتبقي، ونسب التحصيل.</p></div>
-        <div class="hero-stat"><strong id="financeHeroRemaining">0</strong><span>إجمالي المتبقي</span></div>
+      <div class="finance-kpis">
+        <div class="finance-kpi"><span>إجمالي الاستحقاقات</span><strong id="financeExpectedKpi">0 د.ع</strong></div>
+        <div class="finance-kpi"><span>إجمالي المدفوعات</span><strong id="financePaidKpi">0 د.ع</strong></div>
+        <div class="finance-kpi"><span>إجمالي الخصومات</span><strong id="financeDiscountKpi">0 د.ع</strong></div>
+        <div class="finance-kpi"><span>إجمالي المتبقي</span><strong id="financeRemainingKpi">0 د.ع</strong></div>
       </div>
       <div class="panel">
         <div class="panel-head">
-          <div><h3>الأقساط والحسابات</h3><div class="muted">كشف حساب ومتابعة الدفعات</div></div>
-          <button id="addPaymentBtn" class="primary-btn">+ تسجيل دفعة</button>
+          <div><h3>الحسابات والأقساط</h3><div class="muted">متابعة الاستحقاقات والدفعات والخصومات وكشوف الحساب</div></div>
+          <div class="toolbar">
+            <button id="exportFinance" class="secondary-btn">تقرير الحسابات</button>
+            <button id="addPaymentBtn" class="primary-btn">+ تسجيل دفعة</button>
+          </div>
+        </div>
+        <div class="filters three">
+          <input id="financeSearch" placeholder="ابحث باسم الطالب أو الرقم...">
+          <select id="financeStatusFilter"><option value="">كل الحالات</option><option value="مكتمل">مكتمل</option><option value="جزئي">جزئي</option><option value="متأخر">متأخر</option></select>
+          <select id="financeDeptFilter"><option value="">كل الأقسام</option></select>
         </div>
         <div class="table-wrap">
-          <table><thead><tr><th>الطالب</th><th>القسط</th><th>المدفوع</th><th>المتبقي</th><th>نسبة التحصيل</th><th>الحالة</th><th>إجراء</th></tr></thead>
+          <table><thead><tr><th>الطالب</th><th>القسط</th><th>الخصم</th><th>المستحق بعد الخصم</th><th>المدفوع</th><th>المتبقي</th><th>الحالة</th><th>إجراء</th></tr></thead>
           <tbody id="financeTable"></tbody></table>
         </div>
       </div>
     </section>
 
     <section id="gradesPage" class="page hidden">
-      <div class="page-hero">
-        <div><span class="eyebrow">الشؤون الأكاديمية</span><h3>الدرجات و Master Sheet</h3><p>إدارة المواد والدرجات وحساب النتيجة النهائية والنجاح والرسوب.</p></div>
-        <div class="hero-stat"><strong id="gradesHeroCount">0</strong><span>سجل درجات</span></div>
+      <div class="grades-kpis">
+        <div class="grade-kpi"><span>سجلات الدرجات</span><strong id="gradesTotalKpi">0</strong></div>
+        <div class="grade-kpi"><span>ناجح</span><strong id="gradesPassKpi">0</strong></div>
+        <div class="grade-kpi"><span>راسب</span><strong id="gradesFailKpi">0</strong></div>
+        <div class="grade-kpi"><span>متوسط الدرجات</span><strong id="gradesAvgKpi">0</strong></div>
       </div>
       <div class="panel">
         <div class="panel-head">
-          <div><h3>الدرجات و Master Sheet</h3><div class="muted">إدارة المواد والدرجات وحساب النتيجة</div></div>
-          <div class="toolbar"><button id="addGradeBtn" class="primary-btn">+ إدخال درجة</button><button id="exportMasterBtn" class="secondary-btn">تصدير Master Sheet</button></div>
+          <div><h3>الدرجات و Master Sheet</h3><div class="muted">إدخال الدرجات، حساب النتيجة، إنشاء كشف الطالب وتصدير Master Sheet</div></div>
+          <div class="toolbar">
+            <button id="printTranscriptBtn" class="secondary-btn">كشف طالب</button>
+            <button id="exportMasterBtn" class="secondary-btn">تصدير Master Sheet</button>
+            <button id="addGradeBtn" class="primary-btn">+ إدخال درجة</button>
+          </div>
         </div>
-        <div class="filters three">
+        <div class="filters four">
           <select id="gradeDeptFilter"><option value="">كل الأقسام</option></select>
-          <select id="gradeStageFilter">
-            <option value="">كل المراحل</option><option>الأولى</option><option>الثانية</option><option>الثالثة</option><option>الرابعة</option>
-          </select>
+          <select id="gradeStageFilter"><option value="">كل المراحل</option><option>الأولى</option><option>الثانية</option><option>الثالثة</option><option>الرابعة</option></select>
           <select id="gradeSubjectFilter"><option value="">كل المواد</option></select>
+          <select id="gradeTermFilter"><option value="">كل الفصول</option><option value="الأول">الفصل الأول</option><option value="الثاني">الفصل الثاني</option></select>
         </div>
         <div class="table-wrap">
-          <table><thead><tr><th>الطالب</th><th>المادة</th><th>السعي</th><th>النهائي</th><th>النهائية</th><th>النتيجة</th><th>إجراء</th></tr></thead>
+          <table><thead><tr><th>الطالب</th><th>المادة</th><th>الفصل</th><th>السعي</th><th>النهائي</th><th>الدرجة النهائية</th><th>النتيجة</th><th>إجراء</th></tr></thead>
           <tbody id="gradesTable"></tbody></table>
         </div>
       </div>
@@ -236,10 +251,24 @@
 <form id="paymentForm" class="dialog-card">
   <div class="dialog-head"><h3>تسجيل دفعة</h3><button type="button" class="icon-btn" onclick="closeDialog('paymentDialog')">×</button></div>
   <label>الطالب</label><select id="pStudent" required></select>
-  <label>مبلغ الدفعة</label><input id="pAmount" type="text" inputmode="numeric" required>
-  <label>طريقة الدفع</label><select id="pMethod"><option>نقدًا</option><option>تحويل</option><option>بطاقة</option></select>
+  <div class="form-grid">
+    <div><label>مبلغ الدفعة</label><input id="pAmount" type="text" inputmode="numeric" required></div>
+    <div><label>رقم القسط / الدفعة</label><input id="pInstallment" type="text" inputmode="numeric" placeholder="مثال: 1"></div>
+    <div><label>طريقة الدفع</label><select id="pMethod"><option>نقدًا</option><option>تحويل</option><option>بطاقة</option></select></div>
+    <div><label>تاريخ الدفع</label><input id="pDate" type="date"></div>
+  </div>
   <label>ملاحظة</label><input id="pNote" placeholder="اختياري">
-  <div class="dialog-actions"><button type="button" class="secondary-btn" onclick="closeDialog('paymentDialog')">إلغاء</button><button class="primary-btn">حفظ الدفعة</button></div>
+  <div class="dialog-actions"><button type="button" class="secondary-btn" onclick="closeDialog('paymentDialog')">إلغاء</button><button class="primary-btn">حفظ الدفعة وطباعة الإيصال</button></div>
+</form>
+</dialog>
+
+<dialog id="discountDialog">
+<form id="discountForm" class="dialog-card">
+  <div class="dialog-head"><h3>إضافة خصم</h3><button type="button" class="icon-btn" onclick="closeDialog('discountDialog')">×</button></div>
+  <label>الطالب</label><select id="dStudent" required></select>
+  <label>قيمة الخصم</label><input id="dAmount" type="text" inputmode="numeric" required>
+  <label>سبب الخصم</label><input id="dReason" required placeholder="منحة، قرار إداري، خصم تسجيل...">
+  <div class="dialog-actions"><button type="button" class="secondary-btn" onclick="closeDialog('discountDialog')">إلغاء</button><button class="primary-btn">حفظ الخصم</button></div>
 </form>
 </dialog>
 
@@ -249,10 +278,20 @@
   <div class="form-grid">
     <div><label>الطالب</label><select id="gStudent" required></select></div>
     <div><label>المادة</label><select id="gSubject" required></select></div>
+    <div><label>الفصل</label><select id="gTerm"><option value="الأول">الفصل الأول</option><option value="الثاني">الفصل الثاني</option></select></div>
     <div><label>السعي</label><input id="gCourse" type="text" inputmode="numeric" required></div>
     <div><label>النهائي</label><input id="gFinal" type="text" inputmode="numeric" required></div>
   </div>
   <div class="dialog-actions"><button type="button" class="secondary-btn" onclick="closeDialog('gradeDialog')">إلغاء</button><button class="primary-btn">حفظ الدرجة</button></div>
+</form>
+</dialog>
+
+<dialog id="transcriptDialog">
+<form id="transcriptForm" class="dialog-card">
+  <div class="dialog-head"><h3>كشف درجات طالب</h3><button type="button" class="icon-btn" onclick="closeDialog('transcriptDialog')">×</button></div>
+  <label>الطالب</label><select id="tStudent" required></select>
+  <label>الفصل</label><select id="tTerm"><option value="">كل الفصول</option><option value="الأول">الفصل الأول</option><option value="الثاني">الفصل الثاني</option></select>
+  <div class="dialog-actions"><button type="button" class="secondary-btn" onclick="closeDialog('transcriptDialog')">إلغاء</button><button class="primary-btn">إنشاء الكشف</button></div>
 </form>
 </dialog>
 

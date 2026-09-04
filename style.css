@@ -352,3 +352,44 @@
 #studentsTable tr:hover{background:#f8fbff}
 @media(max-width:900px){.mini-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:650px){.mini-stats{grid-template-columns:1fr}}
+
+.finance-kpis{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+  margin-bottom:14px
+}
+.finance-kpi{
+  background:#fff;border:1px solid var(--line);border-radius:14px;
+  padding:15px 17px;box-shadow:var(--shadow)
+}
+.finance-kpi span{display:block;font-size:11px;color:var(--muted)}
+.finance-kpi strong{display:block;font-size:19px;margin-top:7px;color:#17243a}
+.finance-remain{font-weight:700}
+.receipt-card{font-family:Tahoma,Arial,sans-serif;direction:rtl;padding:24px;max-width:760px}
+.receipt-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #17243a;padding-bottom:14px;margin-bottom:16px}
+.receipt-table{width:100%;border-collapse:collapse;margin-top:14px}
+.receipt-table th,.receipt-table td{border:1px solid #ddd;padding:9px;text-align:right}
+@media(max-width:900px){.finance-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.finance-kpis{grid-template-columns:1fr}}
+
+.grades-kpis{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+  margin-bottom:14px
+}
+.grade-kpi{
+  background:#fff;border:1px solid var(--line);border-radius:14px;
+  padding:15px 17px;box-shadow:var(--shadow)
+}
+.grade-kpi span{display:block;font-size:11px;color:var(--muted)}
+.grade-kpi strong{display:block;font-size:20px;margin-top:7px;color:#17243a}
+.filters.four{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+  margin-bottom:12px
+}
+@media(max-width:900px){.grades-kpis{grid-template-columns:repeat(2,1fr)}.filters.four{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.grades-kpis,.filters.four{grid-template-columns:1fr}}
