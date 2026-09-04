@@ -508,4 +508,17 @@
 .subject-stage-chip{display:inline-block;padding:5px 8px;border-radius:7px;background:#eef4ff;color:#17499b;font-size:11px}
 
 .department-identity{display:flex;align-items:center;gap:12px;min-width:0}
-.department-logo{display:block!important;width:58px!important;height:58px!important;min-width:58px;border-radius:14px;object-fit:cover;border:1px solid var(--line);background:#fff;flex:none}
+.department-logo{display:block;width:54px;height:54px;min-width:54px;border-radius:14px;object-fit:cover;border:1px solid var(--line);background:#fff}
+.department-title-box{min-width:0}
+.department-title{font-size:16px!important;line-height:1.45;font-weight:700;word-break:break-word}
+.department-code{font-size:11px!important;color:var(--muted);margin-top:3px}
+.department-action{font-size:12px!important;line-height:1.2;white-space:nowrap;padding:7px 10px!important}
+.danger-lite{color:var(--danger)}
+.department-card-head .list-meta{flex-wrap:wrap;justify-content:flex-start}
+.logo-picker{display:flex;align-items:center;gap:12px;padding:10px 0}
+.logo-preview{width:64px;height:64px;border:1px dashed #cbd5e1;border-radius:12px;display:grid;place-items:center;color:var(--muted);font-size:11px;background:#fafbfd;overflow:hidden;flex:none}
+.logo-preview img{width:100%;height:100%;object-fit:cover}
+.logo-help{font-size:11px;color:var(--muted);margin-top:6px}
+#dLogo{font-size:12px!important}
+@media(max-width:900px){.department-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.department-cards{grid-template-columns:1fr}.department-card-head{align-items:flex-start;flex-direction:column}.department-card-head .list-meta{width:100%}}
