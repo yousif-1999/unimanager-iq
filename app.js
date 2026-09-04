@@ -26,6 +26,32 @@ const s=students.find(x=>x.id===payment.studentId),disc=getDiscount(s.id),paid=g
 const w=window.open("","_blank","width=820,height=700");if(!w)return;
 w.document.write(`<!doctype html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>إيصال دفع</title><style>body{font-family:Tahoma,Arial;padding:30px;color:#17243a}.head{display:flex;justify-content:space-between;border-bottom:2px solid #17243a;padding-bottom:14px}.box{border:1px solid #ddd;padding:14px;border-radius:8px;margin-top:14px}table{width:100%;border-collapse:collapse;margin-top:16px}td,th{border:1px solid #ddd;padding:10px;text-align:right}.total{font-size:18px;font-weight:bold}</style></head><body><div class="head"><div><h2>UniManager IQ</h2><div>إيصال دفع مالي</div></div><div>التاريخ: ${payment.date}</div></div><div class="box"><p><b>الطالب:</b> ${s.name}</p><p><b>الرقم:</b> ${s.number}</p><p><b>القسم:</b> ${s.dept}</p><p><b>المرحلة:</b> ${s.stage}</p></div><table><tr><th>البيان</th><th>القيمة</th></tr><tr><td>القسط</td><td>${fmt(s.fee)}</td></tr><tr><td>الخصومات</td><td>${fmt(disc)}</td></tr><tr><td>المبلغ المستحق</td><td>${fmt(due)}</td></tr><tr><td>هذه الدفعة</td><td class="total">${fmt(payment.amount)}</td></tr><tr><td>إجمالي المدفوع</td><td>${fmt(paid)}</td></tr><tr><td>المتبقي</td><td>${fmt(rem)}</td></tr></table><div class="box">طريقة الدفع: ${payment.method} ${payment.installment?` — الدفعة رقم ${payment.installment}`:""}<br>${payment.note||""}</div><p style="margin-top:45px">توقيع الموظف: ____________________</p><script>window.print()<\/script></body></html>`);w.document.close();}
 
+
+qs("#downloadSubjectsTemplateBtn").onclick=()=>{
+download([{القسم:departments[0]?.name||"اسم القسم",المرحلة:"الأولى",المادة:"اسم المادة",الوحدات:3},{القسم:departments[0]?.name||"اسم القسم",المرحلة:"الثانية",المادة:"اسم المادة 2",الوحدات:3}],"subjects-import-template.xlsx");
+};
+qs("#importSubjectsBtn").onclick=()=>qs("#subjectsExcelInput").click();
+qs("#subjectsExcelInput").onchange=async e=>{
+const f=e.target.files[0];if(!f)return;
+try{
+const wb=XLSX.read(await f.arrayBuffer());
+const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:""});
+let added=0,skipped=0;
+for(const r of rows){
+const dept=String(r["القسم"]||r["اسم القسم"]||r.dept||"").trim();
+const stage=String(r["المرحلة"]||r.stage||"").trim();
+const name=String(r["المادة"]||r["اسم المادة"]||r.name||"").trim();
+const units=num(r["الوحدات"]||r["وحدات المادة"]||r.units||0);
+if(!dept||!stage||!name||!units||!departments.some(d=>d.name===dept)||!["الأولى","الثانية","الثالثة","الرابعة"].includes(stage)){skipped++;continue;}
+const duplicate=subjects.some(m=>m.dept===dept&&m.stage===stage&&m.name===name);
+if(duplicate){skipped++;continue;}
+subjects.push({id:crypto.randomUUID(),name,dept,stage,units});added++;
+}
+if(!added&&skipped)throw new Error("لم تتم إضافة مواد. تأكد من أسماء الأقسام والمراحل والأعمدة في القالب.");
+save();alert(`تمت إضافة ${added} مادة${skipped?` وتجاوز ${skipped} صف`:""}.`);
+}catch(err){alert("تعذر استيراد مواد الأقسام: "+err.message)}
+e.target.value="";
+};
 renderAll();};
 function showPage(page){qsa(".page").forEach(x=>x.classList.add("hidden"));qs("#"+page+"Page").classList.remove("hidden");qsa(".nav-item").forEach(x=>x.classList.toggle("active",x.dataset.page===page));qs("#pageTitle").textContent={dashboard:"لوحة التحكم",students:"إدارة الطلبة",finance:"الأقساط والحسابات",grades:"الدرجات و Master Sheet",departments:"الأقسام والمواد",reports:"التقارير"}[page]||page;}
 qsa(".nav-item").forEach(b=>b.onclick=()=>showPage(b.dataset.page));qsa("[data-page-jump]").forEach(b=>b.onclick=()=>showPage(b.dataset.pageJump));
@@ -60,7 +86,38 @@ if(qs("#financeDeptFilter")){const cur=qs("#financeDeptFilter").value;qs("#finan
 const rows=students.filter(s=>(!q||[s.number,s.name].join(" ").toLowerCase().includes(q))&&(!dept||s.dept===dept)).map(s=>{const discount=getDiscount(s.id),paidNow=getPaid(s.id),due=Math.max(0,num(s.fee)-discount),rem=Math.max(0,due-paidNow),pct=due?Math.round(paidNow/due*100):100;const st=rem<=0?"مكتمل":paidNow>0?"جزئي":"متأخر";return {s,discount,due,paidNow,rem,pct,st};}).filter(x=>!status||x.st===status);
 qs("#financeTable").innerHTML=rows.map(x=>`<tr><td><strong>${x.s.name}</strong><div class="muted">${x.s.number}</div></td><td>${fmt(x.s.fee)}</td><td>${fmt(x.discount)}</td><td>${fmt(x.due)}</td><td>${fmt(x.paidNow)}</td><td class="finance-remain">${fmt(x.rem)}</td><td><span class="badge ${x.st==="مكتمل"?"success":x.st==="جزئي"?"warning":"danger"}">${x.st}</span></td><td><button class="action-btn" onclick="openPaymentFor('${x.s.id}')">دفعة</button><button class="action-btn" onclick="openDiscountFor('${x.s.id}')">خصم</button><button class="action-btn" onclick="openProfile('${x.s.id}')">كشف</button></td></tr>`).join("")||'<tr><td colspan="8" class="empty-state">لا توجد نتائج</td></tr>';
 }
-function renderDepartments(){
+
+function readImageAsDataUrl(file){
+  return new Promise((resolve,reject)=>{
+    if(!file){resolve("");return;}
+    const reader=new FileReader();
+    reader.onload=()=>resolve(reader.result);
+    reader.onerror=reject;
+    reader.readAsDataURL(file);
+  });
+}
+const DEFAULT_DEPT_LOGOS={
+  FIN:"data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='24' fill='%23eaf2ff'/%3E%3Ccircle cx='60' cy='60' r='40' fill='%231d4ed8'/%3E%3Ctext x='60' y='73' font-size='42' text-anchor='middle' fill='white' font-family='Arial'%3Eد%3C/text%3E%3C/svg%3E",
+  BUS:"data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='24' fill='%23eefbf3'/%3E%3Ccircle cx='60' cy='60' r='40' fill='%2315803d'/%3E%3Ctext x='60' y='73' font-size='42' text-anchor='middle' fill='white' font-family='Arial'%3Eأ%3C/text%3E%3C/svg%3E",
+  LAW:"data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='24' fill='%23fff7ed'/%3E%3Ccircle cx='60' cy='60' r='40' fill='%23b45309'/%3E%3Ctext x='60' y='73' font-size='42' text-anchor='middle' fill='white' font-family='Arial'%3Eق%3C/text%3E%3C/svg%3E"
+};
+function ensureDepartmentLogos(){
+  departments.forEach(d=>{
+    if(!d.logo) d.logo=DEFAULT_DEPT_LOGOS[d.code]||DEFAULT_DEPT_LOGOS.LAW;
+  });
+}
+async function changeDeptLogo(id){
+  const d=departments.find(x=>x.id===id);
+  if(!d)return;
+  const input=document.createElement("input");
+  input.type="file"; input.accept="image/*";
+  input.onchange=async()=>{
+    const file=input.files?.[0];
+    if(file){d.logo=await readImageAsDataUrl(file);save();}
+  };
+  input.click();
+}
+function renderDepartments(){ensureDepartmentLogos();
 if(qs("#departmentsList")){
 qs("#departmentsList").innerHTML=departments.map(d=>{
 const deptSubjects=subjects.filter(m=>m.dept===d.name);
@@ -69,14 +126,14 @@ const stagesHtml=stages.map(stage=>{
 const list=deptSubjects.filter(m=>m.stage===stage);
 return `<div class="department-stage"><div class="stage-title">${stage} — ${list.length} مادة</div>${list.length?list.map(m=>`<span class="subject-chip">${m.name}<small> (${m.units} و)</small></span>`).join(""):'<span class="no-subjects">لا توجد مواد لهذه المرحلة.</span>'}</div>`;
 }).join("");
-return `<div class="department-card"><div class="department-card-head"><div><div class="department-title">${d.name}</div><div class="department-code">رمز: ${d.code}</div></div><div class="list-meta"><span class="subject-count">${deptSubjects.length}</span><button class="small-btn" onclick="deleteDept('${d.id}')">حذف</button></div></div>${stagesHtml}</div>`;
+return `<div class="department-card"><div class="department-card-head"><div class="department-identity"><img class="department-logo" src="${d.logo||DEFAULT_DEPT_LOGOS.LAW}" alt="شعار ${d.name}"><div><div class="department-title">${d.name}</div><div class="department-code">رمز: ${d.code}</div></div></div><div class="list-meta"><span class="subject-count">${deptSubjects.length}</span><button class="small-btn" onclick="changeDeptLogo('${d.id}')">تغيير الشعار</button><button class="small-btn" onclick="deleteDept('${d.id}')">حذف</button></div></div>${stagesHtml}</div>`;
 }).join("")||'<div class="empty-state">لا توجد أقسام.</div>';
 }
 if(qs("#subjectsList")){
-qs("#subjectsList").innerHTML=departments.map(d=>{
-const deptSubjects=subjects.filter(m=>m.dept===d.name);
-return `<div class="subject-stage-card"><div class="subject-group-label">${d.name} — مجموعة المواد الخاصة بالقسم <span class="subject-count">${deptSubjects.length}</span></div><div class="subject-catalog">${["الأولى","الثانية","الثالثة","الرابعة"].map(stage=>{const list=deptSubjects.filter(m=>m.stage===stage);return `<div><h4>${stage}</h4><div class="subject-stage-list">${list.length?list.map(m=>`<span class="subject-pill">${m.name}<small> — ${m.units} وحدات</small></span>`).join(""):'<span class="no-subjects">لا توجد مواد.</span>'}</div></div>`}).join("")}</div></div>`;
-}).join("")||'<div class="empty-state">أضف قسمًا ومواده أولًا.</div>';
+qs("#subjectsList").innerHTML=`<div class="subject-management">${departments.map(d=>{
+const list=subjects.filter(m=>m.dept===d.name).sort((a,b)=>["الأولى","الثانية","الثالثة","الرابعة"].indexOf(a.stage)-["الأولى","الثانية","الثالثة","الرابعة"].indexOf(b.stage)||a.name.localeCompare(b.name,"ar"));
+return `<div class="subject-management-card"><div class="subject-management-head"><div><div class="subject-management-title">${d.name}</div><div class="subject-management-meta">مجموعة المواد الخاصة بالقسم</div></div><span class="subject-count">${list.length} مادة</span></div><div class="subjects-table-wrap"><table class="subjects-table"><thead><tr><th>المادة</th><th>المرحلة</th><th>الوحدات</th><th>إجراء</th></tr></thead><tbody>${list.length?list.map(m=>`<tr><td><strong>${m.name}</strong></td><td><span class="subject-stage-chip">${m.stage}</span></td><td>${m.units}</td><td><button class="action-btn danger-btn" onclick="deleteSubject('${m.id}')">حذف</button></td></tr>`).join(""):`<tr><td colspan="4" class="empty-state">لا توجد مواد مضافة لهذا القسم.</td></tr>`}</tbody></table></div></div>`;
+}).join("")||'<div class="empty-state">أضف قسمًا أولًا.</div>'}</div>`;
 }
 }
 function renderGradeFilters(){const sub=qs("#gradeSubjectFilter"),cur=sub.value;sub.innerHTML='<option value="">كل المواد</option>'+subjects.map(s=>`<option value="${s.id}">${s.name}</option>`).join("");sub.value=subjects.some(s=>s.id===cur)?cur:"";}
@@ -125,7 +182,7 @@ qs("#gStage").onchange=()=>{updateGradeEntrySubjects();const s=students.find(x=>
 qs("#gradeForm").onsubmit=e=>{e.preventDefault();const studentId=qs("#gStudent").value,subjectId=qs("#gSubject").value,course=num(qs("#gCourse").value),finalScore=num(qs("#gFinal").value),student=students.find(x=>x.id===studentId),subject=subjects.find(x=>x.id===subjectId);if(!student||!subject||student.dept!==subject.dept||student.stage!==subject.stage){alert("المادة المختارة لا تنتمي إلى قسم الطالب ومرحلته.");return;}if(course<0||course>40||finalScore<0||finalScore>60){alert("السعي يجب أن يكون بين 0 و40 والنهائي بين 0 و60.");return;}const term=qs("#gTerm").value;const old=grades.find(g=>g.studentId===studentId&&g.subjectId===subjectId&&((g.term||"الأول")===term));const data={id:old?.id||crypto.randomUUID(),studentId,subjectId,term,course,final:finalScore};grades=old?grades.map(g=>g.id===old.id?data:g):[...grades,data];qs("#gradeDialog").close();save();};
 window.deleteGrade=id=>{grades=grades.filter(g=>g.id!==id);save();};
 qs("#addDeptBtn").onclick=()=>{qs("#dName").value="";qs("#dCode").value="";qs("#deptDialog").showModal();};
-qs("#deptForm").onsubmit=e=>{e.preventDefault();departments.push({id:crypto.randomUUID(),name:qs("#dName").value.trim(),code:normalizeDigits(qs("#dCode").value.trim())});qs("#deptDialog").close();save();};
+qs("#deptForm").onsubmit=async e=>{e.preventDefault();const name=qs("#dName").value.trim(),code=qs("#dCode").value.trim().toUpperCase(),file=qs("#dLogo")?.files?.[0],logo=await readImageAsDataUrl(file);if(!name||!code){alert("أدخل اسم القسم والرمز.");return;}if(departments.some(d=>d.name.toLowerCase()===name.toLowerCase()||d.code.toLowerCase()===code.toLowerCase())){alert("القسم أو رمز القسم موجود مسبقًا.");return;}departments.push({id:uid(),name,code,logo:logo||DEFAULT_DEPT_LOGOS[code]||DEFAULT_DEPT_LOGOS.LAW});save();e.target.reset();qs("#deptDialog").close();};save();};
 window.deleteDept=id=>{const d=departments.find(x=>x.id===id);if(students.some(s=>s.dept===d?.name)||subjects.some(s=>s.dept===d?.name)){alert("لا يمكن حذف القسم لأنه مرتبط بطلبة أو مواد.");return;}departments=departments.filter(x=>x.id!==id);save();};
 qs("#addSubjectBtn").onclick=()=>{fillDeptSelect("subDept",false);qs("#subName").value="";qs("#subStage").value="الأولى";qs("#subUnits").value="3";qs("#subjectDialog").showModal();};
 qs("#subjectForm").onsubmit=e=>{e.preventDefault();subjects.push({id:crypto.randomUUID(),name:qs("#subName").value.trim(),dept:qs("#subDept").value,stage:qs("#subStage").value,units:num(qs("#subUnits").value)});qs("#subjectDialog").close();save();};
@@ -145,3 +202,4 @@ qs("#exportBtn").onclick=exportStudents;qs("#reportStudents").onclick=exportStud
 qs("#importBtn").onclick=()=>qs("#excelInput").click();
 qs("#excelInput").onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const wb=XLSX.read(await f.arrayBuffer());const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:""});const mapped=rows.map((r,i)=>({id:crypto.randomUUID(),number:normalizeDigits(r["الرقم"]||r["رقم الطالب"]||r.number||i+1),name:r["اسم الطالب"]||r["الاسم"]||r.name||"",dept:r["القسم"]||r.dept||departments[0]?.name||"",stage:r["المرحلة"]||r.stage||"الأولى",study:r["الدراسة"]||r.study||"صباحية",fee:num(r["القسط الكلي"]||r["القسط"]||r.fee),paid:num(r["المدفوع"]||r.paid)})).filter(x=>x.name);if(!mapped.length)throw new Error("لم يتم العثور على صفوف صالحة");students=[...students,...mapped];save();alert(`تم استيراد ${mapped.length} طالب بنجاح`);}catch(err){alert("تعذر استيراد الملف: "+err.message)}e.target.value="";};
 renderAll();
+try{ensureDepartmentLogos();save();}catch(e){}

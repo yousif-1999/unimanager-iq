@@ -493,3 +493,18 @@
   color:var(--muted);
   margin:0 0 8px
 }
+
+.toolbar-actions{display:flex;gap:8px;flex-wrap:wrap}
+.subject-management{display:grid;gap:14px}
+.subject-management-card{border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+.subject-management-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 15px;background:#f7f9fd;border-bottom:1px solid var(--line)}
+.subject-management-title{font-weight:700}
+.subject-management-meta{font-size:11px;color:var(--muted);margin-top:3px}
+.subjects-table-wrap{overflow:auto}
+.subjects-table{width:100%;border-collapse:collapse}
+.subjects-table th,.subjects-table td{padding:9px 11px;border-bottom:1px solid #eef1f5;text-align:right;white-space:nowrap}
+.subjects-table th{font-size:11px;color:#657086;background:#fafbfc}
+.subjects-table td{font-size:12px}
+.subject-stage-chip{display:inline-block;padding:5px 8px;border-radius:7px;background:#eef4ff;color:#17499b;font-size:11px}
+
+.department-identity{display:flex;align-items:center;gap:12px}.department-logo{display:block!important;width:58px!important;height:58px!important;min-width:58px;border-radius:14px;object-fit:cover;border:1px solid var(--line);background:#fff;}

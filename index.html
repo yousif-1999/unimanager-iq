@@ -207,8 +207,13 @@
       </div>
       <div class="panel">
         <div class="panel-head">
-          <div><h3>إضافة وإدارة المواد</h3><div class="muted">ربط كل مادة بالقسم والمرحلة وعدد الوحدات.</div></div>
-          <button id="addSubjectBtn" class="primary-btn">+ إضافة مادة</button>
+          <div><h3>خطة مواد الأقسام</h3><div class="muted">كل مادة مرتبطة بقسم ومرحلة محددين. يمكنك إدخالها يدويًا أو استيرادها من Excel.</div></div>
+          <div class="toolbar-actions">
+            <button id="downloadSubjectsTemplateBtn" class="secondary-btn">قالب المواد Excel</button>
+            <button id="importSubjectsBtn" class="secondary-btn">استيراد مواد Excel</button>
+            <button id="addSubjectBtn" class="primary-btn">+ إضافة مادة</button>
+            <input id="subjectsExcelInput" type="file" accept=".xlsx,.xls,.csv" hidden>
+          </div>
         </div>
         <div id="subjectsList"></div>
       </div>
