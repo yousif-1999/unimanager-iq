@@ -122,16 +122,36 @@ window.changeDeptLogo=async id=>{
   };
   input.click();
 };
+let openDepartmentId="";
+function toggleDepartment(id){openDepartmentId=(openDepartmentId===id)?"":id;renderDepartments();}
 function renderDepartments(){
 if(qs("#departmentsList")){
 qs("#departmentsList").innerHTML=departments.map(d=>{
 const deptSubjects=subjects.filter(m=>m.dept===d.name);
 const stages=["الأولى","الثانية","الثالثة","الرابعة"];
+const isOpen=openDepartmentId===d.id;
 const stagesHtml=stages.map(stage=>{
-const list=deptSubjects.filter(m=>m.stage===stage);
-return `<div class="department-stage"><div class="stage-title">${stage} — ${list.length} مادة</div>${list.length?list.map(m=>`<span class="subject-chip">${m.name}<small> (${m.units} و)</small></span>`).join(""):'<span class="no-subjects">لا توجد مواد لهذه المرحلة.</span>'}</div>`;
+const list=deptSubjects.filter(m=>m.stage===stage).sort((a,b)=>a.name.localeCompare(b.name,"ar"));
+const rows=list.length?list.map(m=>`<tr><td class="dept-subject-name">${m.name}</td><td class="dept-subject-units">${normalizeDigits(m.units)}</td></tr>`).join(""):`<tr><td colspan="2" class="dept-empty">لا توجد مواد مدخلة لهذه المرحلة.</td></tr>`;
+return `<div class="department-stage-row"><div class="department-stage-label"><span>${stage}</span><small>${list.length} مادة</small></div><div class="department-stage-chart"><table><thead><tr><th>اسم المادة</th><th>عدد الوحدات</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
 }).join("");
-return `<div class="department-card"><div class="department-card-head"><div class="department-identity"><img class="department-logo" src="${getDeptLogo(d)}" alt="شعار ${d.name}"><div class="department-title-box"><div class="department-title">${d.name}</div><div class="department-code">رمز: ${d.code}</div></div></div><div class="list-meta"><span class="subject-count">${deptSubjects.length}</span><button class="small-btn department-action" onclick="changeDeptLogo('${d.id}')">تغيير الشعار</button><button class="small-btn department-action danger-lite" onclick="deleteDept('${d.id}')">حذف</button></div></div>${stagesHtml}</div>`;
+return `<article class="department-card ${isOpen?"is-open":""}">
+<div class="department-card-head">
+<button type="button" class="department-main-button" onclick="toggleDepartment('${d.id}')" aria-expanded="${isOpen}">
+<div class="department-identity"><img class="department-logo" src="${getDeptLogo(d)}" alt="شعار ${d.name}">
+<div class="department-title-box"><div class="department-title">${d.name}</div><div class="department-code">رمز: ${d.code}</div></div></div>
+<div class="department-open-hint"><span>${deptSubjects.length} مادة</span><b>${isOpen?"−":"+"}</b></div>
+</button>
+<div class="list-meta">
+<button type="button" class="small-btn department-action" onclick="event.stopPropagation();changeDeptLogo('${d.id}')">تغيير الشعار</button>
+<button type="button" class="small-btn department-action danger-lite" onclick="event.stopPropagation();deleteDept('${d.id}')">حذف</button>
+</div>
+</div>
+<div class="department-details ${isOpen?"show":""}">
+<div class="department-details-title">الخطة الدراسية — ${d.name}</div>
+<div class="department-stages">${stagesHtml}</div>
+</div>
+</article>`;
 }).join("")||'<div class="empty-state">لا توجد أقسام.</div>';
 }
 if(qs("#subjectsList")){

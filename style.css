@@ -578,3 +578,200 @@
     justify-content:flex-start!important;
   }
 }
+
+/* v1.5.5 — خطة المواد داخل كل قسم */
+.department-card-head{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:10px!important;
+  align-items:center!important;
+}
+.department-main-button{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  border:0;
+  background:transparent;
+  padding:0;
+  margin:0;
+  cursor:pointer;
+  color:inherit;
+  text-align:right;
+}
+.department-identity{display:flex!important;align-items:center;gap:12px;min-width:0}
+.department-main-button:hover .department-title{color:#1d4ed8}
+.department-open-hint{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  flex:0 0 auto;
+  font-size:11px;
+  color:#526076;
+}
+.department-open-hint b{
+  width:24px;height:24px;
+  display:grid;
+  place-items:center;
+  border-radius:7px;
+  background:#eaf1ff;
+  color:#1d4ed8;
+  font-size:16px;
+}
+.department-details{
+  display:none;
+  border-top:1px solid var(--line);
+  background:#fbfcfe;
+}
+.department-details.show{display:block}
+.department-details-title{
+  padding:12px 14px 4px;
+  font-size:13px;
+  font-weight:700;
+  color:#26354d;
+}
+.department-stages{
+  display:grid;
+  gap:10px;
+  padding:10px 14px 15px;
+}
+.department-stage-row{
+  display:grid;
+  grid-template-columns:120px minmax(0,1fr);
+  gap:10px;
+  align-items:stretch;
+}
+.department-stage-label{
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:#f3f6fb;
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:flex-start;
+}
+.department-stage-label span{
+  font-size:13px;
+  font-weight:700;
+  color:#334155;
+}
+.department-stage-label small{
+  margin-top:5px;
+  font-size:10px;
+  color:var(--muted);
+}
+.department-stage-chart{
+  border:1px solid var(--line);
+  border-radius:10px;
+  overflow:hidden;
+  background:#fff;
+}
+.department-stage-chart table{
+  width:100%;
+  border-collapse:collapse;
+  table-layout:fixed;
+}
+.department-stage-chart th,
+.department-stage-chart td{
+  padding:9px 11px;
+  border-bottom:1px solid #edf0f4;
+  font-size:11px;
+}
+.department-stage-chart th{
+  background:#f7f9fd;
+  color:#526076;
+  font-weight:700;
+  text-align:right;
+}
+.department-stage-chart th:last-child,
+.department-stage-chart td:last-child{
+  width:115px;
+  text-align:center;
+}
+.department-stage-chart tbody tr:last-child td{border-bottom:0}
+.dept-subject-name{color:#20314c}
+.dept-subject-units{font-weight:700;color:#17499b}
+.dept-empty{
+  text-align:center!important;
+  color:var(--muted);
+}
+@media(max-width:650px){
+  .department-card-head{grid-template-columns:1fr!important}
+  .department-card-head .list-meta{justify-content:flex-start!important}
+  .department-stage-row{grid-template-columns:1fr}
+  .department-stage-label{padding:9px 11px;flex-direction:row;justify-content:space-between;align-items:center}
+  .department-stage-label small{margin-top:0}
+  .department-main-button{align-items:flex-start}
+}
+
+/* v1.5.6 — عرض اسم القسم بالكامل */
+.department-card-head{
+  display:block!important;
+  width:100%;
+  padding:14px 14px 12px!important;
+}
+.department-main-button{
+  width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:14px!important;
+  padding:0!important;
+}
+.department-identity{
+  flex:1 1 auto!important;
+  width:auto!important;
+  min-width:0!important;
+}
+.department-title-box{
+  flex:1 1 auto!important;
+  min-width:0!important;
+}
+.department-title{
+  display:block!important;
+  width:100%!important;
+  font-size:16px!important;
+  line-height:1.55!important;
+  font-weight:800!important;
+  white-space:normal!important;
+  word-break:normal!important;
+  overflow-wrap:anywhere!important;
+  text-align:right!important;
+}
+.department-open-hint{
+  flex:0 0 auto!important;
+}
+.department-card-head .list-meta{
+  margin-top:11px!important;
+  padding-top:10px!important;
+  border-top:1px solid #edf0f4;
+  width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:7px!important;
+  flex-wrap:wrap!important;
+}
+.department-action{
+  font-size:11px!important;
+  line-height:1.3!important;
+  padding:7px 11px!important;
+}
+.department-logo{
+  width:60px!important;
+  height:60px!important;
+  min-width:60px!important;
+}
+@media(max-width:650px){
+  .department-card-head{
+    padding:12px!important;
+  }
+  .department-title{
+    font-size:15px!important;
+  }
+  .department-main-button{
+    gap:10px!important;
+  }
+}
